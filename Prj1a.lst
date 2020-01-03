@@ -1,0 +1,842 @@
+    1 00000018         	fp:	.struct	-4*9		#stack frame structure offsets {
+    2 ffffffdc         	local:	.word	0
+    3 ffffffe0         	s7:	.word	0
+    4 ffffffe4         	s6:	.word	0
+    5 ffffffe8         	s5:	.word	0
+    6 ffffffec         	s4:	.word	0	
+    7 fffffff0         	s3:	.word	0
+    8 fffffff4         	s2:	.word	0
+    9 fffffff8         	s1:	.word	0
+   10 fffffffc         	s0:	.word	0
+   11 00000000         	fp:	.word	0
+   12 00000004         	ra:	.word	0
+   13 00000008         	a0:	.word	0
+   14 0000000c         	a1:	.word	0
+   15 00000010         	a2:	.word	0
+   16 00000014         	a3:	.word	0		
+   17                  		.code			# } 
+   18                   #                             ASCII Table                               {        
+   19                   #    0 1 2 3 4 5 6 7 8 9 a b c d e f     0 1 2 3 4 5 6 7 8 9 a b c d e f        
+   20                   #   имямямямямямямямямямямямямямямям╩   имямямямямямямямямямямямямямямям╩       
+   21                   #  0╨ Ё Ё Ё Ё Ё Ё Ё control codes Ё ╨  8╨─Ё│Ё┌Ё┐Ё└Ё┘Ё├Ё┤Ё┬Ё┴Ё┼Ё▀Ё▄Ё█Ё▌Ё▐╨       
+   22                   #   гдедедедедедедедедедедедедедедед╤   гдедедедедедедедедедедедедедедед╤       
+   23                   #  1╨ Ё Ё Ё Ё Ё Ё Ё Ё Ё Ё Ё Ё Ё Ё Ё ╨  9╨░Ё▒Ё▓Ё⌠Ё■Ё∙Ё√Ё≈Ё≤Ё≥Ё Ё⌡Ё°Ё²Ё·Ё÷╨       
+   24                   #   гдедедедедедедедедедедедедедедед╤   гдедедедедедедедедедедедедедедед╤       
+   25                   #  2╨ Ё!Ё"Ё#Ё$Ё%Ё&Ё'Ё(Ё)Ё*Ё+Ё,Ё-Ё.Ё/╨  a╨═Ё║Ё╒ЁёЁ╓Ё╔Ё╕Ё╖Ё╗Ё╘Ё╙Ё╚Ё╛Ё╜Ё╝Ё╞╨       
+   26                   #   гдедедедедедедедедедедедедедедед╤   гдедедедедедедедедедедедедедедед╤       
+   27                   #  3╨0Ё1Ё2Ё3Ё4Ё5Ё6Ё7Ё8Ё9Ё:Ё;Ё<Ё=Ё>Ё?╨  b╨╟Ё╠Ё╡ЁЁЁ╢Ё╣Ё╤Ё╥Ё╦Ё╧Ё╨Ё╩Ё╪Ё╫Ё╬Ё©╨       
+   28                   #   гдедедедедедедедедедедедедедедед╤   гдедедедедедедедедедедедедедедед╤       
+   29                   #  4╨@ЁAЁBЁCЁDЁEЁFЁGЁHЁIЁJЁKЁLЁMЁNЁO╨  c╨юЁаЁбЁцЁдЁеЁфЁгЁхЁиЁйЁкЁлЁмЁнЁо╨       
+   30                   #   гдедедедедедедедедедедедедедедед╤   гдедедедедедедедедедедедедедедед╤       
+   31                   #  5╨PЁQЁRЁSЁTЁUЁVЁWЁXЁYЁZЁ[Ё\Ё]Ё^Ё_╨  d╨пЁяЁрЁсЁтЁуЁжЁвЁьЁыЁзЁшЁэЁщЁчЁъ╨       
+   32                   #   гдедедедедедедедедедедедедедедед╤   гдедедедедедедедедедедедедедедед╤       
+   33                   #  6╨`ЁaЁbЁcЁdЁeЁfЁgЁhЁiЁjЁkЁlЁmЁnЁo╨  e╨ЮЁАЁБЁЦЁДЁЕЁФЁГЁХЁИЁЙЁКЁЛЁМЁНЁО╨       
+   34                   #   гдедедедедедедедедедедедедедедед╤   гдедедедедедедедедедедедедедедед╤       
+   35                   #  7╨pЁqЁrЁsЁtЁuЁvЁwЁxЁyЁzЁ{Ё|Ё}Ё~Ё ╨  f╨ПЁЯЁРЁСЁТЁУЁЖЁВЁЬЁЫЁЗЁШЁЭЁЩЁЧЁ ╨       
+   36                   #   хмомомомомомомомомомомомомомомом╪   хмомомомомомомомомомомомомомомом╪       
+   37                   # 07 Bell	\a	0B Up Line	\v                                      
+   38                   # 08 Backspace	\b	0C Clear Screen	\f                                      
+   39                   # 09 Tab	\t	0D Return	\r                                      
+   40                   # 0A New Line	\n	0E Down Line    }
+   41                  		.data
+   42                   screenImage:			# scanned to determine location of buttons and labels {
+   43 10010000 dcdcdcdc	row0:	.ascii	"эээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээ\n"
+   44 1001004a 494d20dd	row1:	.ascii	"щ MIPSym Calculator Project - Fall 2108                                 ч\n"
+   45 10010094 d52020dd		.ascii	"щ  уммммммяммммммямммммм╦               ждддддддддддддддддддддддддддд╥  ч\n"
+   46 100100de b32020dd		.ascii	"щ  ЁЫ Dec Ёo Hex Ёo Bin Ё               ╨    -1.7976931348623157e+308╨  ч\n"
+   47 10010128 d42020dd		.ascii	"щ  тммммммоммммммомммммм╬               сдддддддддддддддддддддддддддд╫  ч\n"       
+   48 10010172 d52020dd		.ascii	"щ  умммммммммямммммммммяммммммммм╦здддд©здддд©здддд©здддд©здддд©здддд©  ч\n"
+   49 100101bc b32020dd		.ascii	"щ  ЁЫ DegreesЁo RadiansЁo Grads  ЁЁ D  ЁЁ E  ЁЁ F  ЁЁ M+ ЁЁ M- ЁЁ \x11\x16 Ё  ч\n"
+   50 10010206 d42020dd		.ascii	"щ  тмммммммммомммммммммоммммммммм╬юддддыюддддыюддддыюддддыюддддыюдддды  ч\n"
+   51 10010250 da2020dd		.ascii	"щ  здддд©зддддд©здддд©здддд©здддд©здддд©здддд©здддд©здддд©здддд©здддд©  ч\n"
+   52 1001029a b32020dd		.ascii	"щ  Ё    ЁЁ Inv ЁЁ ln ЁЁ (  ЁЁ  ) ЁЁ A  ЁЁ B  ЁЁ C  ЁЁ Я  ЁЁ Ш  ЁЁ MS Ё  ч\n"
+   53 100102e4 c02020dd		.ascii	"щ  юддддыюдддддыюддддыюддддыюддддыюддддыюддддыюддддыюддддыюддддыюдддды  ч\n"
+   54 1001032e da2020dd		.ascii	"щ  здддд©зддддд©здддд©здддд©здддд©здддд©здддд©здддд©здддд©здддд©здддд©  ч\n"
+   55 10010378 b32020dd		.ascii	"щ  Ё IntЁЁ sinhЁЁ sinЁЁ xЩ ЁЁ n! ЁЁ 7  ЁЁ 8  ЁЁ 9  ЁЁ /  ЁЁ %  ЁЁ MR Ё  ч\n"
+   56 100103c2 c02020dd		.ascii	"щ  юддддыюдддддыюддддыюддддыюддддыюддддыюддддыюддддыюддддыюддддыюдддды  ч\n"
+   57 1001040c da2020dd		.ascii	"щ  здддд©зддддд©здддд©здддд©здддд©здддд©здддд©здддд©здддд©здддд©здддд©  ч\n"
+   58 10010456 b32020dd		.ascii	"щ  Ё dmsЁЁ coshЁЁ cosЁЁ xЭ ЁЁ ЭШxЁЁ 4  ЁЁ 5  ЁЁ 6  ЁЁ *  ЁЁ 1/xЁЁ MC Ё  ч\n"
+   59 100104a0 c02020dd		.ascii	"щ  юддддыюдддддыюддддыюддддыюддддыюддддыюддддыюддддыюддддыюддддыюдддды  ч\n"
+   60 100104ea da2020dd		.ascii	"щ  здддд©зддддд©здддд©здддд©здддд©здддд©здддд©здддд©здддд©здддд©здддд©  ч\n"
+   61 10010534 b32020dd		.ascii	"щ  Ё Ц  ЁЁ tanhЁЁ tanЁЁ x^3ЁЁ 3ШxЁЁ 1  ЁЁ 2  ЁЁ 3  ЁЁ -  ЁЁ =  ЁЁ CE Ё  ч\n"
+   62 1001057e c02020dd		.ascii	"щ  юддддыюдддддыюддддыюддддыюддддыюддддыюддддыюддддыюддддыЁ =  Ёюдддды  ч\n"
+   63 100105c8 da2020dd		.ascii	"щ  здддд©зддддд©здддд©здддд©здддд©здддддддддд©здддд©здддд©Ё    Ёздддд©  ч\n"
+   64 10010612 b32020dd		.ascii	"щ  Ё F-EЁЁ Exp ЁЁ ModЁЁ logЁЁ 10ЭЁЁ    0     ЁЁ .  ЁЁ +  ЁЁ    ЁЁ C  Ё  ч\n"
+   65 1001065c c02020dd		.ascii	"щ  юддддыюдддддыюддддыюддддыюддддыюддддддддддыюддддыюддддыюддддыюдддды  ч\n"
+   66 100106a6 dfdfdfdf		.asciiz	"ъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъ"
+   67                  		.code				
+   68                   
+   69          0000004a	rowlength = row1-row0							#}
+   70 10000008 ffff8000 	.extern	im.ptr,4		#{
+   71 10000008 ffff8004 	.extern	im.x,1			# static global variables used by find button
+   72 10000008 ffff8005 	.extern im.y,1
+   73 10000008 ffff8006 	.extern	im.w,1
+   74 10000008 ffff8007 	.extern	im.h,1	
+   75                  		.code			#}
+   76                   find_button:				# returns packed struct with x,y,w,h in v0. {
+   77                   					# return label pointer in v1 for box type s0
+   78 00400000 92080000		lbu	$t0,box.ulc($s0)		
+   79 00400004 8f898000		lw	$t1,im.ptr($gp)		#
+   80 00400008 15200003		bnez	$t1,1f
+   81                  		la	$t1,screenImage		# initialize pointer
+   81 0040000c 3c091001		lui	$t1,0x1001
+   81 00400010 35290000		ori	$t1,$t1,0x00
+   82 00400014 af808004		sw	$0,im.x($gp)		# clear search co-ordinates	
+   83 00400018 938a8004	1:	lbu	$t2,im.x($gp)
+   84 0040001c 938b8005		lbu	$t3,im.y($gp)
+   85 00400020 200d000a		addi	$t5,$0,'\n		# stop at new line
+   86 00400024 912c0000	2:	lbu	$t4,($t1)		# get next character from screenImage
+   87 00400028 21290001		addi	$t1,$t1,1		# move pointer
+   88 0040002c 110c0007		beq	$t0,$t4,3f
+   89 00400030 214a0001		addi	$t2,$t2,1		# x++
+   90 00400034 1180001e		beqz	$t4,99f			# end-of-screen
+   91 00400038 158dfffa		bne	$t4,$t5,2b		
+   92 0040003c 21290001		addi	$t1,$t1,1		# move past newline
+   93 00400040 216b0001		addi	$t3,$t3,1		# move y to next line
+   94 00400044 00005020		add	$t2,$0,$0		# clear x
+   95 00400048 0401fff6		b	2b
+   96 0040004c a38a8004	3:	sb	$t2,im.x($gp)		# save the x
+   97 00400050 a38b8005		sb	$t3,im.y($gp)		# save the y
+   98 00400054 2123004a		addi	$v1,$t1,rowlength	# create pointer to label!	
+   99 00400058 92080002		lbu	$t0,box.urc($s0)	# find the upper right corner
+  100 0040005c 200a0002		addi	$t2,$0,2		# start counting the width
+  101 00400060 912c0000	4:	lbu	$t4,($t1)		# get next character from screenImage
+  102 00400064 21290001		addi	$t1,$t1,1		# move pointer
+  103 00400068 110c0002		beq	$t0,$t4,5f
+  104 0040006c 214a0001		addi	$t2,$t2,1		# w++
+  105 00400070 0401fffb		b	4b			
+  106 00400074 a38a8006	5:	sb	$t2,im.w($gp)		# store w
+  107 00400078 af898000		sw	$t1,im.ptr($gp)		# save pointer for next search
+  108 0040007c 92080008		lbu	$t0,box.lrc($s0)	# find lower right corner
+  109 00400080 200a0001		addi	$t2,$0,1		# initn h		
+  110 00400084 2129004a	6:	addi	$t1,$t1,rowlength	# move down
+  111 00400088 214a0001		addi	$t2,$t2,1		# h++
+  112 0040008c 912cffff		lbu	$t4,-1($t1)	
+  113 00400090 1588fffc		bne	$t4,$t0,6b
+  114 00400094 a38a8007		sb	$t2,im.h($gp)		# save h
+  115 00400098 8f828004		lw	$v0,im.x($gp)		# grab packed result
+  116 0040009c 93888004		lbu	$t0,im.x($gp)		# correct x for start of next find
+  117 004000a0 93898006		lbu	$t1,im.w($gp)
+  118 004000a4 01094020		add	$t0,$t0,$t1
+  119 004000a8 a3888004		sb	$t0,im.x($gp)
+  120 004000ac 03e00008		jr	$ra
+  121 004000b0 af808000	99:	sw	$0,im.ptr($gp)		# clear pointer at image finish
+  122 004000b4 00001021		mov	$v0,$0			# no button found
+  123 004000b8 03e00008		jr	$ra
+  124                   ############################################################################## }
+  125                   # class obj   {
+  126 0000001c         	obj:	.struct		#{
+  127 00000000         	VFT:		.word	0		# Virtual Function table pointer
+  128 00000004         	parent:		.word	0		# Pointer to obj
+  129 00000008         	firstChild:	.word	0		# Pointer to obj
+  130 0000000c         	lastChild:	.word	0		# Pointer to obj
+  131 00000010         	leftSibling:	.word	0		# Pointer to obj
+  132 00000014         	rightSibling:	.word	0		# Pointer to obj
+  133 00000018         	x:		.byte	0		# screen co-ordinates upper-left corner
+  134 00000019         	y:		.byte	0	
+  135 0000001a         	width:		.byte	0 		# in characters
+  136 0000001b         	height:		.byte	0		# 
+  137                  			.data			# -------------------------------------}
+  138 00000018         	obj_Vft: 	.struct			# { inherited by descendant classes.
+  139 00000000         	className:	.word	0		# returns pointer to string
+  140 00000004         	size:		.word	0		# returns int byte size required 
+  141 00000008         	draw:		.word	0		# draws *this:s0 on screen
+  142 0000000c         	mouseDown:	.word	0		# handles mouseDown events
+  143 00000010         	mouseMove:	.word	0		# handles mouseMove events
+  144 00000014         	mouseUp:	.word	0		# handles mouseUp events
+  145                  			.data			# }
+  146                  		.code				#---------------------------------------
+  147                   obj.obj:		#(obj *parent:a0, word locationSize:a1, VFT *vft:a2) {
+  148                   # arguments for constructor
+  149                   # a0: parent pointer required for all but base obj.
+  150                   # a1: x,y,width,height packed co-ordinates and dimensions.
+  151                   # a2: virtual function table pointer for concrete class being constructed.
+  152                   # s0: "this" pointer
+  153 004000bc ae050018		sw	$a1,obj.x($s0)
+  154 004000c0 ae060000		sw	$a2,obj.VFT($s0)	# populate the virtual function pointer
+  155 004000c4 ae040004		sw	$a0,obj.parent($s0)
+  156 004000c8 ae000008		sw	$0,obj.firstChild($s0)
+  157 004000cc ae00000c		sw	$0,obj.lastChild($s0)
+  158 004000d0 ae000010		sw	$0,obj.leftSibling($s0)
+  159 004000d4 ae000014		sw	$0,obj.rightSibling($s0)
+  160 004000d8 10800008		beqz	$a0,9f			# no parent means no linking
+  161 004000dc 8c880008		lw	$t0,obj.firstChild($a0)
+  162 004000e0 15000001		bnez	$t0,1f			# if the parent has no first
+  163 004000e4 ac900008		sw	$s0,obj.firstChild($a0)	# this becomes first child
+  164 004000e8 8c88000c	1:	lw	$t0,obj.lastChild($a0)	# link this into parent's list
+  165 004000ec 11000002		beqz	$t0,2f
+  166 004000f0 ad100014		sw	$s0,obj.rightSibling($t0)
+  167 004000f4 ae080010		sw	$t0,obj.leftSibling($s0)
+  168 004000f8 ac90000c	2:	sw	$s0,obj.lastChild($a0)
+  169 004000fc 03e00008	9:	jr	$ra			# ret to descendant constructor
+  170                   #}
+  171                   obj.draw:		#void () { calls virtual method to draw and adds object to mouse map 
+  172 00400100 23bdfffc		addi	$sp,$sp,-word
+  173 00400104 afbf0000		sw	$ra,($sp)
+  174 00400108 8e080000		lw	$t0,obj.VFT($s0)
+  175 0040010c 8d080008		lw	$t0,obj_Vft.draw($t0)
+  176 00400110 0100f809		jalr	$t0			# call virtual method draw
+  177                   
+  178 00400114 82080018		lb	$t0,obj.x($s0)
+  179 00400118 82090019		lb	$t1,obj.y($s0)
+  180 0040011c 920a001a		lbu	$t2,obj.width($s0)
+  181 00400120 920b001b		lbu	$t3,obj.height($s0)
+  182                   
+  183 00400124 0000c821		mov	$t9,$0			# row counter (count up stop at height)
+  184                  		la	$t6,mouse.map
+  184 00400128 3c0e1001		lui	$t6,0x1001
+  184 0040012c 35ce0884		ori	$t6,$t6,0x884
+  185 00400130 01002021	5:	mov	$a0,$t0
+  186 00400134 01202821		mov	$a1,$t1
+  187 00400138 00056880		sll	$t5,$a1,2		# y*4
+  188 0040013c 01a56820		add 	$t5,$t5,$a1		# y*5
+  189 00400140 000d6900		sll	$t5,$t5,4		# y*80
+  190 00400144 01a86820		add	$t5,$t5,$t0		# y+x
+  191 00400148 000d6880		sll	$t5,$t5,2		# *4 
+  192 0040014c 01ae6820		add	$t5,$t5,$t6		# final pointer to first char 
+  193 00400150 01a01021	6:	mov	$v0,$t5			# temp pointer for row
+  194 00400154 0140c021		mov	$t8,$t2			# width counter ( count down )
+  195                   
+  196 00400158 adb00000	7:	sw	$s0,($t5)		# store pointer to this obj in mouse map.
+  197 0040015c 21ad0004		addi	$t5,$t5,word			
+  198 00400160 2318ffff		addi	$t8,$t8,-1
+  199 00400164 1f00fffc		bgtz	$t8,7b
+  200 00400168 006a1820		add	$v1,$v1,$t2		# correct pointer by actual width
+  201 0040016c 23390001		addi	$t9,$t9,1		# row counter
+  202 00400170 204d0140		addi	$t5,$v0,80*word		# advance y co-ordinate
+  203 00400174 172bfff6		bne	$t9,$t3,6b
+  204 00400178 8fbf0000	9:	lw	$ra,($sp)
+  205 0040017c 23bd0004		addi	$sp,$sp,word
+  206 00400180 03e00008		jr	$ra 			# }
+  207                   obj.drawChildren:			#() recursive routine to draw obj's children {
+  208 00400184 23bdfff8		addi	$sp,$sp,-8
+  209 00400188 afbf0004		sw	$ra,4($sp)
+  210 0040018c afb00000		sw	$s0,0($sp)
+  211 00400190 0c100040		jal	obj.draw
+  212 00400194 8e100008		lw	$s0,obj.firstChild($s0)
+  213 00400198 12000003		beqz	$s0,90f
+  214 0040019c 0c100061	2:	jal	obj.drawChildren
+  215 004001a0 8e100014		lw	$s0,obj.rightSibling($s0)
+  216 004001a4 1600fffd		bnez	$s0,2b
+  217 004001a8 8fb00000	90:	lw	$s0,0($sp)
+  218 004001ac 8fbf0004		lw	$ra,4($sp)
+  219 004001b0 23bd0008		addi	$sp,$sp,8
+  220 004001b4 03e00008		jr	$ra 			# }
+  221                   ############################################################################## }
+  222 00000029         	button:	.struct	obj			# class button : obj { {
+  223 0000001c         	func:	.word	0
+  224 00000020         	label:	.word	0,0			# space for up to 7 characters
+  225 00000028         	pushed:	.byte	0
+  226                  		.data				#}
+  227                   
+  228                   button_VFT:				#{
+  229 100106f0 00400210		.word	button.name		# returns pointer to string
+  230 100106f4 0040021c		.word	button.size			# returns int byte size required 
+  231 100106f8 00400224		.word	button.draw		# draws *this:s0 on screen
+  232 100106fc 004004cc		.word	NO.OP			# handles mouseDown events
+  233 10010700 004004cc		.word	NO.OP			# handles mouseMove events
+  234 10010704 004004cc		.word	NO.OP			# handles mouseUp events 
+  235                  		.code				# }
+  236                   button.button:				#(obj *parent:a0, word locationSize:a1, char* lab:a3)this:s0 {
+  237 004001b8 23bdfffc		addi	$sp,$sp,-word
+  238 004001bc afbf0000		sw	$ra,($sp)
+  239 004001c0 0c10002f		jal	obj.obj			# construct ancestor class
+  240                  		la	$t0,button_VFT		# pass virtual function table pointer
+  240 004001c4 3c081001		lui	$t0,0x1001
+  240 004001c8 350806f0		ori	$t0,$t0,0x6F0
+  241 004001cc ae080000		sw 	$t0,obj.VFT($s0)
+  242 004001d0 22090020		addi	$t1,$s0,button.label    # form pointer to label within button
+  243                  		li	$t2,7			# max label length
+  243 004001d4 340a0007		ori	$t2,$0,0x07
+  244                  		li	$t3,'Ё			# edge of label box 
+  244 004001d8 200bffb3		addi	$t3,$0,0xFFB3
+  245 004001dc 80e80000	1:	lb	$t0,($a3)		# pickup characters to put into label
+  246 004001e0 20e70001		addi	$a3,$a3,1		
+  247 004001e4 150b0001		bne	$t0,$t3,2f		# if at edge of box store 0
+  248 004001e8 00004021	19:	mov	$t0,$0
+  249 004001ec a1280000	2:	sb	$t0,($t1)		# put character into button
+  250 004001f0 21290001		addi	$t1,$t1,1		
+  251 004001f4 11000003		beqz	$t0,3f			# if nul char exit
+  252 004001f8 214affff		addi	$t2,$t2,-1		# check for too many characters
+  253 004001fc 1d40fff7		bgtz	$t2,1b			# 
+  254 00400200 0401fff9		b	19b			# force nul
+  255 00400204 8fbf0000	3:	lw	$ra,($sp)
+  256 00400208 23bd0004		addi	$sp,$sp,word
+  257 0040020c 03e00008		jr	$ra			#}
+  258                   button.name:				# {
+  259                  		la	$v0,button_name_string
+  259 00400210 3c021001		lui	$v0,0x1001
+  259 00400214 34420708		ori	$v0,$v0,0x708
+  260 00400218 03e00008		jr	$ra
+  261                  		.data
+  262 10010708 74747562	button_name_string: .asciiz "button"
+  263                  		.code				
+  264                   button.size:
+  265 0040021c 20020029		addi	$v0,$0,button	
+  266 00400220 03e00008		jr	$ra			# }
+  267                   button.draw:				#{
+  268 00400224 23bdfff8		addi	$sp,$sp,-2*word
+  269 00400228 afbf0004		sw	$ra,word($sp)
+  270 0040022c afb00000		sw	$s0,($sp)
+  271 00400230 92040018		lbu	$a0,obj.x($s0)
+  272 00400234 92050019		lbu	$a1,obj.y($s0)
+  273 00400238 9206001a		lbu	$a2,obj.width($s0)
+  274 0040023c 9207001b		lbu	$a3,obj.height($s0)
+  275                  		la	$s0,box.single
+  275 00400240 3c101001		lui	$s0,0x1001
+  275 00400244 361027c4		ori	$s0,$s0,0x27C4
+  276 00400248 0c100146		jal	box.draw
+  277 0040024c 8fb00000		lw	$s0,($sp)
+  278 00400250 22040020		addi	$a0,$s0,button.label
+  279 00400254 0000010c		syscall	$print_string	
+  280 00400258 8fbf0004		lw	$ra,word($sp)
+  281 0040025c 23bd0008		addi	$sp,$sp,2*word
+  282 00400260 03e00008		jr	$ra			#}
+  283                   button.border:
+  284 00400264 ffffffff	button.moveN:	.word -1,nop,1,nop,2,nop,1,nop,1,nop
+  285 0040028c 00000001	button.move:	.word  1,b.hover,1,b.switchN,3,b.pick,3,nop,0,b.idle
+  286 004002b4 00000000	button.down:    .word  0,nop,2,b.down,-1,nop,-1,nop,2,b.down
+  287 004002dc 00000000	button.up:	.word  0,nop,-1,nop,4,b.action,0,b.release,-1,nop
+  288 00400304 03e00008	nop:	jr $ra
+  289                   
+  290                   b.hover:
+  291 00400308 af9003a4		sw $s0,b.H($gp)
+  292 0040030c 20080001		addi $t0,$0,boxType.double
+  293 00400310 a3880264		sb $t0,button.border($gp)
+  294 00400314 0401ffc3		b button.draw
+  295                   b.switchN:
+  296 00400318 23bdfff8		addi $sp,$sp,-2*word
+  297 0040031c afbf0004		sw $ra,word($sp)
+  298 00400320 afb00000		sw $s0,($sp)
+  299 00400324 a3800264		sb $0,button.border($gp)
+  300 00400328 8f9003b0		lw $s0,b.N($gp)
+  301                   button.mouse.move:
+  302                  		la $t1,button.moveN
+  302 0040032c 3c090040		lui	$t1,0x40
+  302 00400330 35290264		ori	$t1,$t1,0x264
+  303 00400334 8f8803b0		lw $t0,b.N($gp)
+  304 00400338 11100001		beq $t0,$s0,2f
+  305 0040033c 21290028		addi $t1,$t1,button.move-button.moveN
+  306 00400340 838a03bc	2:	lb $t2,b.state($gp)
+  307 00400344 000a50c0		sll $t2,$t2,3
+  308 00400348 01495020		add $t2,$t2,$t1
+  309 0040034c 8d4b0000		lw $t3,($t2)
+  310 00400350 8d4c0004		lw $t4,word($t2)
+  311 00400354 a38b03bc		sb $t3,b.state($gp)
+  312 00400358 01800008		jr $t4
+  313                   button.mouse.down:
+  314                  		la $t1,button.down
+  314 0040035c 3c090040		lui	$t1,0x40
+  314 00400360 352902b4		ori	$t1,$t1,0x2B4
+  315 00400364 0401fff6		b 2b
+  316                   button.mouse.up:
+  317                  		la $t1,button.up
+  317 00400368 3c090040		lui	$t1,0x40
+  317 0040036c 352902dc		ori	$t1,$t1,0x2DC
+  318 00400370 0401fff3		b 2b
+  319                   b.pick:
+  320                  		la $t1,b.pick
+  320 00400374 3c090040		lui	$t1,0x40
+  320 00400378 35290374		ori	$t1,$t1,0x374
+  321 0040037c 0401fff0		b 2b
+  322                   b.idle:
+  323                  		la $t1,b.idle
+  323 00400380 3c090040		lui	$t1,0x40
+  323 00400384 35290380		ori	$t1,$t1,0x380
+  324 00400388 0401ffed		b 2b
+  325                   b.down:
+  326                  		la $t1,b.down
+  326 0040038c 3c090040		lui	$t1,0x40
+  326 00400390 3529038c		ori	$t1,$t1,0x38C
+  327 00400394 0401ffea		b 2b
+  328                   b.up:
+  329                  		la $t1,b.up
+  329 00400398 3c090040		lui	$t1,0x40
+  329 0040039c 35290398		ori	$t1,$t1,0x398
+  330 004003a0 0401ffe7		b 2b
+  331                   b.H:
+  332                  		la $t1,b.H
+  332 004003a4 3c090040		lui	$t1,0x40
+  332 004003a8 352903a4		ori	$t1,$t1,0x3A4
+  333 004003ac 0401ffe4		b 2b
+  334                   b.N:
+  335                  		la $t1,b.N
+  335 004003b0 3c090040		lui	$t1,0x40
+  335 004003b4 352903b0		ori	$t1,$t1,0x3B0
+  336 004003b8 0401ffe1		b 2b
+  337                   b.state:
+  338                  		la $t1,b.state
+  338 004003bc 3c090040		lui	$t1,0x40
+  338 004003c0 352903bc		ori	$t1,$t1,0x3BC
+  339 004003c4 0401ffde		b 2b
+  340                   b.action:
+  341 004003c8 23bdfff8		addi $sp,$sp,-2*word
+  342 004003cc afbf0004		sw   $ra,word($sp)
+  343 004003d0 afb00000		sw   $s0,($sp)
+  344 004003d4 a3800264		sb   $0,button.border($gp)
+  345 004003d8 0c100089		jal  button.draw
+  346 004003dc 8fbf0004		lw   $ra,word($sp)
+  347 004003e0 8fb00000		lw   $s0,($sp)
+  348 004003e4 23bd0008		addi $sp,$sp,2*word
+  349 004003e8 8e08001c		lw   $t0,button.func($s0)
+  350 004003ec 11000001		beqz $t0,9f
+  351 004003f0 01000008		jr   $t0
+  352 004003f4 03e00008	9:	jr   $ra
+  353                   b.release:
+  354 004003f8 8f9003b0		lw $s0,b.N($gp)
+  355 004003fc a3800264		sb $0,button.border($gp)
+  356 00400400 0401ff88		b  button.draw
+  357                   	#}
+  358                   ############################################################################## }
+  359                  		.code
+  360 00000038         	button2:	.struct button
+  361 0000002c         	func2:		.word  0
+  362 00000030         	label2:		.word 0,0
+  363                  		.data
+  364 00000022         	buttonInit: .struct
+  365 00000000         	number:  .word 0
+  366 00000004         	func2:	 .word 0
+  367 00000008         	label2:  .word 0,0
+  368 00000010         	extras:  .word 0,0
+  369 00000018         	203f6520	        		 .asciiz " e? "
+  370 0000001d         	63617246	        		 .asciiz "Frac"
+  371                   	 	
+  372                   		
+  373                   ############################################################################## }
+  374 0000001d         	radioGroup: .struct obj
+  375 0000001c         	value:	.byte 0
+  376                  		.data	
+  377                   radioGroup_VFT:
+  378 10010710 100107a0		.word radioGroup.name
+  379 10010714 10010798		.word radioGroup.size
+  380 10010718 100107b7		.word radioGroup.draw
+  381 1001071c 004004cc		.word NO.OP
+  382 10010720 004004cc		.word NO.OP
+  383 10010724 004004cc		.word NO.OP
+  384                   radioGroup.radioGroup:
+  385 10010728 23bdfffc		addi	$sp,$sp,-word
+  386 1001072c afbf0000		sw	$ra,($sp)
+  387 10010730 0c10002f		jal	obj.obj			
+  388                  		la	$t0,radioGroup_VFT		
+  388 10010734 3c081001		lui	$t0,0x1001
+  388 10010738 35080710		ori	$t0,$t0,0x710
+  389 1001073c ae080000		sw 	$t0,obj.VFT($s0)
+  390 10010740 20060001		add 	$a2,$0,1
+  391 10010744 a206001c		sb 	$a2,radioGroup.value($s0)		
+  392 10010748 96050018		lhu	$a1,obj.x($s0)	
+  393 1001074c 20a50101		addi	$a1,$a1,0x101
+  394 10010750 3c080107		lui	$t0,0x107
+  395 10010754 00a82820		add	$a1,$a1,$t0		
+  396 10010758 20e70002	1:	addi	$a3,$a3,2
+  397 1001075c 20040039		addi	$a0,$0,radiobutton
+  398 10010760 0000024c		syscall $malloc
+  399 10010764 8fa40000		lw	$a0,($sp)
+  400 10010768 00408021		mov 	$s0,$v0
+  401 1001076c 0c100101		jal 	radiobutton.radiobutton		
+  402 10010770 20c60001		addi	$a2,$a2,1
+  403 10010774 2048fff7		addi 	$t0,$v0,-9
+  404 10010778 00084022		sub 	$t0,$0,$t0
+  405 1001077c a208001a		sb	$t0,obj.width($s0)
+  406 10010780 00a82820		add	$a1,$a1,$t0
+  407 10010784 90090018		lbu	$t1,obj.x($0)
+  408 10010788 01094020		add	$t0,$t0,$t1	
+  409 1001078c 8fbf0000	3:	lw	$ra,($sp)
+  410 10010790 23bd0004		addi	$sp,$sp,word
+  411 10010794 03e00008		jr	$ra
+  412                   radioGroup.size:
+  413 10010798 2002001d		addi	$v0,$0,radioGroup
+  414 1001079c 03e00008		jr	$ra
+  415                   radioGroup.name:
+  416                  		la	$v0,button_name_string
+  416 100107a0 3c021001		lui	$v0,0x1001
+  416 100107a4 34420708		ori	$v0,$v0,0x708
+  417 100107a8 03e00008		jr	$ra
+  418 100107ac 69646152	radioGroup_name_string: .asciiz "RadioGroup"
+  419                   
+  420                   radioGroup.draw:
+  421 100107b7 23bdfff8		addi	$sp,$sp,-2*word
+  422 100107bb afbf0004		sw	$ra,word($sp)
+  423 100107bf afb00000		sw	$s0,($sp)
+  424 100107c3 92040018		lbu	$a0,obj.x($s0)
+  425 100107c7 92050019		lbu	$a1,obj.y($s0)
+  426 100107cb 9206001a		lbu	$a2,obj.width($s0)
+  427 100107cf 9207001b		lbu	$a3,obj.height($s0)
+  428                  		la	$s0,box.dhsv
+  428 100107d3 3c101001		lui	$s0,0x1001
+  428 100107d7 361027df		ori	$s0,$s0,0x27DF
+  429 100107db 0c100146		jal	box.draw
+  430 100107df 8fb00000		lw	$s0,($sp)
+  431 100107e3 0000010c		syscall	$print_string	
+  432 100107e7 8fbf0004		lw	$ra,word($sp)
+  433 100107eb 23bd0008		addi	$sp,$sp,2*word
+  434 100107ef 03e00008		jr	$ra
+  435                   	
+  436                   ############################################################################## }
+  437 00000039         	radiobutton: .struct button
+  438 0000002c         	func:	.word	0
+  439 00000030         	label:	.word	0,0			
+  440 00000038         	pushed:	.byte	0
+  441                  		.data
+  442                   radiobutton_VFT:
+  443 100107f4 00400460		.word radiobutton.name
+  444 100107f8 00400458		.word radiobutton.size
+  445 100107fc 0040046c		.word radiobutton.draw
+  446 10010800 004004cc		.word NO.OP
+  447 10010804 004004cc		.word NO.OP
+  448 10010808 004004cc		.word NO.OP
+  449                  		.code
+  450                   radiobutton.radiobutton:
+  451 00400404 23bdfffc		addi 	$sp,$sp,-word
+  452 00400408 afbf0000		sw 	$ra,($sp)
+  453 0040040c 0c10006e		jal 	button.button
+  454                  		la 	$a0,radiobutton_VFT
+  454 00400410 3c041001		lui	$a0,0x1001
+  454 00400414 348407f4		ori	$a0,$a0,0x7F4
+  455 00400418 ae080000		sw 	$t0,obj.VFT($s0) 
+  456                  		li	$t2,7			
+  456 0040041c 340a0007		ori	$t2,$0,0x07
+  457                  		li	$t3,'Ё			
+  457 00400420 200bffb3		addi	$t3,$0,0xFFB3
+  458 00400424 80e80000	1:	lb	$t0,($a3)		
+  459 00400428 20e70001		addi	$a3,$a3,1		
+  460 0040042c 150b0001		bne	$t0,$t3,367b		
+  461 00400430 00004021	366b:	mov	$t0,$0
+  462 00400434 a1280000	367b:	sb	$t0,($t1)		
+  463 00400438 21290001		addi	$t1,$t1,1		
+  464 0040043c 11000003		beqz	$t0,3f			
+  465 00400440 214affff		addi	$t2,$t2,-1		
+  466 00400444 1d40fff7		bgtz	$t2,1b			
+  467 00400448 0401fff9		b	366b		
+  468 0040044c 8fbf0000	3:	lw	$ra,($sp)
+  469 00400450 23bd0004		addi	$sp,$sp,word
+  470 00400454 03e00008		jr	$ra
+  471                   radiobutton.size:
+  472 00400458 20020039		addi	$v0,$0,radiobutton
+  473 0040045c 03e00008		jr	$ra	
+  474                   radiobutton.name:
+  475                  		la	$v0,button_name_string
+  475 00400460 3c021001		lui	$v0,0x1001
+  475 00400464 34420708		ori	$v0,$v0,0x708
+  476 00400468 03e00008		jr	$ra
+  477                   radiobutton.draw:
+  478 0040046c 23bdfff8		addi	$sp,$sp,-2*word
+  479 00400470 afbf0004		sw	$ra,word($sp)
+  480 00400474 afb00000		sw	$s0,($sp)
+  481 00400478 92040018		lbu	$a0,obj.x($s0)
+  482 0040047c 92050019		lbu	$a1,obj.y($s0)
+  483 00400480 0000050c		syscall $xy
+  484 00400484 8e080004		lw 	$t0,obj.parent($s0)
+  485                   #	lbu	$t1,radioGroup.value($t0)
+  486                   #	lbu	$t2,radioButton.value($s0)
+  487 00400488 200400f9		addi 	$a0,$0,0xf9
+  488 0040048c 152a0001		bne 	$t1,$t2,2f
+  489 00400490 2004006f		addi	$a0,$0,0x6f
+  490                   2:	
+  491 00400494 000002cc		syscall $print_char
+  492 00400498 20040020		addi  	$a0,$0,0x20
+  493 0040049c 000002cc		syscall $print_char
+  494                  		la	$s0,box.dhsv
+  494 004004a0 3c101001		lui	$s0,0x1001
+  494 004004a4 361027df		ori	$s0,$s0,0x27DF
+  495 004004a8 0c100146		jal	box.draw
+  496 004004ac 22040030		addi	$a0,$s0,radiobutton.label
+  497 004004b0 0000010c		syscall	$print_string	
+  498 004004b4 8fbf0004		lw	$ra,word($sp)
+  499 004004b8 23bd0008		addi	$sp,$sp,2*word
+  500 004004bc 03e00008		jr	$ra
+  501                   
+  502                   ############################################################################## }
+  503 00000020         	screen:	.struct	obj			# class screen : obj {
+  504 0000001c         	label:	.word	0			# address of string label
+  505                  		.data	
+  506                   screen0:				# base screen object (preconstructed)
+  507 1001080c 10010864		.word	screen_VFT		# Virtual Function table pointer
+  508 10010810 00000000		.word	0			# Pointer to parent obj
+  509 10010814 00000000		.word	0			# Pointer to first child obj
+  510 10010818 00000000		.word	0			# Pointer to last child obj
+  511 1001081c 00000000		.word	0			# Pointer to leftSibling obj
+  512 10010820 00000000		.word	0			# Pointer to rightSibling obj
+  513 10010824 18490001		.byte	1,0,73,24		# x,y,width,height
+  514 10010828 1001082c		.word	screen0.label
+  515                   screen0.label:
+  516 1001082c 50494d20		.asciiz	" MIPSym Calculator - project fall 2018 CSUEB CS 221-2"
+  517                   	
+  518                   screen_VFT:
+  519 10010864 004004c0		.word	screen.name		# returns pointer to string
+  520 10010868 004004d0		.word	screen.size			# returns int byte size required 
+  521 1001086c 004004d8		.word	screen.draw		# draws *this:s0 on screen
+  522 10010870 004004cc		.word	NO.OP			# handles mouseDown events
+  523 10010874 004004cc		.word	NO.OP			# handles mouseMove events
+  524 10010878 004004cc		.word	NO.OP			# handles mouseUp events
+  525 1001087c 65726373	screen.name.string: .ascii	"screen"
+  526                  		.code
+  527                   screen.name:
+  528                  		la	$v0,screen.name.string
+  528 004004c0 3c021001		lui	$v0,0x1001
+  528 004004c4 3442087c		ori	$v0,$v0,0x87C
+  529 004004c8 03e00008		jr	$ra
+  530 004004cc 03e00008	NO.OP:	jr	$ra
+  531                   screen.size:
+  532 004004d0 20020020		addi	$v0,$0,screen
+  533 004004d4 03e00008		jr	$ra
+  534                   screen.draw:				# virtual method for drawing the screen
+  535 004004d8 23bdfff8		addi	$sp,$sp,-2*word
+  536 004004dc afbf0004		sw	$ra,word($sp)
+  537 004004e0 afb00000		sw	$s0,($sp)
+  538 004004e4 92040018		lbu	$a0,obj.x($s0)
+  539 004004e8 92050019		lbu	$a1,obj.y($s0)
+  540 004004ec 9206001a		lbu	$a2,obj.width($s0)
+  541 004004f0 9207001b		lbu	$a3,obj.height($s0)
+  542                  		la	$s0,box.single
+  542 004004f4 3c101001		lui	$s0,0x1001
+  542 004004f8 361027c4		ori	$s0,$s0,0x27C4
+  543 004004fc 0c100146		jal	box.draw
+  544 00400500 8fb00000		lw	$s0,($sp)
+  545 00400504 8e04001c		lw	$a0,screen.label($s0)
+  546 00400508 0000010c		syscall	$print_string	
+  547 0040050c 8fbf0004		lw	$ra,word($sp)
+  548 00400510 23bd0008		addi	$sp,$sp,2*word
+  549 00400514 03e00008		jr	$ra			#}
+  550                  		.data			
+  551                   mouse.map:				#{
+  552 10010884 00000000		.word	0:2000
+  553                  		.code				#}
+  554 00000009         	box:	.struct				# { {
+  555                   
+  556 00000000         	ulc:	.byte	0	# upper left corner 
+  557 00000001         	top:	.byte	0	
+  558 00000002         	urc:	.byte	0	# upper right corner
+  559 00000003         	left:	.byte	0
+  560 00000004         	mid:	.byte	0
+  561 00000005         	right:	.byte	0
+  562 00000006         	llc:	.byte	0	# lower left corner
+  563 00000007         	bot:	.byte	0
+  564 00000008         	lrc:	.byte	0	# lower right corner		
+  565                  		.data	# marks the conclusion of the .struct }
+  566                   # instances of box class  {
+  567                   box.single:
+  568 100127c4 bfc4da		.ascii	"зд©"	# thin
+  569 100127c7 b320b3		.ascii	"Ё Ё"
+  570 100127ca d9c4c0		.ascii	"юды"
+  571                   box.double:
+  572 100127cd bbcdc9		.ascii	"им╩"	# double
+  573 100127d0 ba20ba		.ascii	"╨ ╨"
+  574 100127d3 bccdc8		.ascii	"хм╪"
+  575                   box.heavy:
+  576 100127d6 dcdcdc		.ascii	"эээ"	# heavy
+  577 100127d9 de20dd		.ascii	"щ ч"
+  578 100127dc dfdfdf		.ascii	"ъъъ"
+  579                   box.dhsv:		# double horizontal single vertical
+  580 100127df b8cdd5		.ascii	"ум╦"
+  581 100127e2 b320b3		.ascii	"Ё Ё"
+  582 100127e5 becdd4		.ascii	"тм╬"
+  583                   box.shdv:		# single horizontal double vertical
+  584 100127e8 b7c4d6		.ascii	"жд╥"
+  585 100127eb ba20ba		.ascii	"╨ ╨"
+  586 100127ee bdc4d3		.ascii	"сд╫"       
+  587                  		.code				
+  588 00000005         	boxType:	.struct
+  589 00000000         	single: .byte 0
+  590 00000001         	double: .byte 0
+  591 00000002         	heavy:  .byte 0
+  592 00000003         	dhsv:	.byte 0
+  593 00000004         	shdv: 	.byte 0
+  594                  		.code
+  595                   
+  596                   #}
+  597                   box.draw:				#{
+  598                   # void box::draw(int x:a0,int y:a1,int width:a2,int height:a3,this *box:s0)
+  599 00400518 0080c021		mov	$t8,$a0		# save for later use
+  600 0040051c 00a0c821		mov	$t9,$a1	
+  601 00400520 0000050c		syscall	$xy
+  602 00400524 82040000		lb	$a0,box.ulc($s0)
+  603 00400528 000002cc		syscall	$print_char
+  604 0040052c 20c8fffe		addi	$t0,$a2,-2	# no error checking! width must be >2
+  605 00400530 82040001		lb	$a0,box.top($s0)
+  606 00400534 000002cc	1:	syscall	$print_char
+  607 00400538 2108ffff		addi	$t0,$t0,-1
+  608 0040053c 1d00fffd		bgtz	$t0,1b
+  609 00400540 82040002		lb	$a0,box.urc($s0)
+  610 00400544 000002cc		syscall	$print_char
+  611 00400548 20e9fffe		addi	$t1,$a3,-2	# no error checking! height >2
+  612 0040054c 03002021	2:	mov	$a0,$t8		
+  613 00400550 20a50001		addi	$a1,$a1,1
+  614 00400554 0000050c		syscall	$xy
+  615 00400558 82040003		lb	$a0,box.left($s0)
+  616 0040055c 000002cc		syscall	$print_char
+  617 00400560 20c8fffe		addi	$t0,$a2,-2	# no error checking! width must be >2
+  618 00400564 82040004		lb	$a0,box.mid($s0)
+  619 00400568 000002cc	1:	syscall	$print_char
+  620 0040056c 2108ffff		addi	$t0,$t0,-1
+  621 00400570 1d00fffd		bgtz	$t0,1b
+  622 00400574 82040005		lb	$a0,box.right($s0)
+  623 00400578 000002cc		syscall	$print_char
+  624 0040057c 2129ffff		addi	$t1,$t1,-1
+  625 00400580 1d20fff2		bgtz	$t1,2b
+  626 00400584 03002021		mov	$a0,$t8		
+  627 00400588 20a50001		addi	$a1,$a1,1
+  628 0040058c 0000050c		syscall	$xy
+  629 00400590 82040006		lb	$a0,box.llc($s0)
+  630 00400594 000002cc		syscall	$print_char
+  631 00400598 20c8fffe		addi	$t0,$a2,-2	# no error checking! width must be >2
+  632 0040059c 82040007		lb	$a0,box.bot($s0)
+  633 004005a0 000002cc	1:	syscall	$print_char
+  634 004005a4 2108ffff		addi	$t0,$t0,-1
+  635 004005a8 1d00fffd		bgtz	$t0,1b
+  636 004005ac 82040008		lb	$a0,box.lrc($s0)
+  637 004005b0 000002cc		syscall	$print_char
+  638 004005b4 23040001		addi	$a0,$t8,1
+  639 004005b8 23250001		addi	$a1,$t9,1		# move cursor for label
+  640 004005bc 0000050c		syscall	$xy
+  641 004005c0 03e00008		jr	$ra			# }
+  642                   #}
+  643                   # IO hardware  { 
+  644 a0000010         	keyboard:	.struct 0xa0000000	#{ start from hardware base address
+  645 a0000000         	flags:		.byte 0
+  646 a0000001         	mask:		.byte 0
+  647 a0000002         			.half 0
+  648 a0000004         	keypress: 	.byte 0,0,0
+  649 a0000007         	presscon: 	.byte 0
+  650 a0000008         	keydown:	.half 0
+  651 a000000a         	shiftdown:	.byte 0
+  652 a000000b         	downcon:	.byte 0
+  653 a000000c         	keyup:		.half 0
+  654 a000000e         	upshift:	.byte 0
+  655 a000000f         	upcon:		.byte 0
+  656                  			.data
+  657                   # } ---------------------------------------------------------------------------
+  658 a0000050         	mouse:		.struct 0xa0000018	# { start from mouse base address
+  659 a0000018         	flags:		.byte 0
+  660 a0000019         	mask:		.byte 0
+  661 a000001a         			.half 0
+  662 a000001c         			.word 0
+  663 a0000020         	move:		.word 0,0
+  664 a0000028         	down:		.word 0,0
+  665 a0000030         	up:		.word 0,0
+  666 a0000038         	wheel:		.word 0,0
+  667 a0000040         	wheeldown:	.word 0,0
+  668 a0000048         	wheelup:	.word 0,0
+  669                  			.data	
+  670 00000000         	mouseFlag:	.struct		# enum mo
+  671          00000001	move		= 1
+  672          00000002	down		= 2
+  673          00000004	up		= 4
+  674          00000008	wheel		= 8
+  675          00000010	wheeldown	= 16
+  676          00000020	wheelup		= 32
+  677                  			.data
+  678 00000000         	mouseButtons:	.struct
+  679          00000001	keyShift 	= 1 # Shift flag values
+  680          00000002	keyAlt 		= 2
+  681          00000004	keyCtrl 	= 4
+  682          00000008	left 		= 8
+  683          00000010	right 		= 16
+  684          00000020	middle 		= 32
+  685          00000040	doubleclick 	= 64
+  686                  			.data
+  687                   # } ---------------------------------------------------------------------------
+  688 a0000070         	timer:		.struct 0xa0000050 	# { start from timer base address
+  689 a0000050         	flags:		.byte 0
+  690 a0000051         	mask:		.byte 0
+  691 a0000052         			.half 0
+  692 a0000054         	t1:		.word 0
+  693 a0000058         	t2:		.word 0
+  694 a000005c         	t3:		.word 0
+  695 a0000060         	t4:		.word 0
+  696 a0000064         	t5:		.word 0
+  697 a0000068         	t6:		.word 0
+  698 a000006c         	t7:		.word 0			
+  699                  			.data			# }
+  700                   # } ---------------------------------------------------------------------------
+  701 100127f1         	main:	.globl	main
+  702                  		li	$a0,'\f		# clear the screen
+  702 100127f1 3404000c		ori	$a0,$0,0x0C
+  703 100127f5 000002cc		syscall	$print_char
+  704 100127f9 af808000		sw	$0,im.ptr($gp)		#initialize button search
+  705                  	2:	la	$s0,box.single
+  705 100127fd 3c101001		lui	$s0,0x1001
+  705 10012801 361027c4		ori	$s0,$s0,0x27C4
+  706 10012805 0c100000		jal	find_button
+  707 10012809 10400009		beqz	$v0,9f
+  708 1001280d 00402821		mov	$a1,$v0			# location and size of button
+  709 10012811 00603821		mov	$a3,$v1			# label pointer
+  710 10012815 20040029		addi	$a0,$0,button		# new button
+  711 10012819 0000024c		syscall	$malloc
+  712 1001281d 00408021		mov	$s0,$v0
+  713                  		la	$a0,screen0		# parent obj
+  713 10012821 3c041001		lui	$a0,0x1001
+  713 10012825 3484080c		ori	$a0,$a0,0x80C
+  714 10012829 0c10006e		jal	button.button		# construct button
+  715 1001282d 0401fff3		b	2b
+  716                  	9:	la	$s0,screen0
+  716 10012831 3c101001		lui	$s0,0x1001
+  716 10012835 3610080c		ori	$s0,$s0,0x80C
+  717 10012839 0c100061		jal	obj.drawChildren
+  718                  	poll: 	la 	$a0,keyboard.flags
+  718 1001283d 3c04a000		lui	$a0,0xA000
+  718 10012841 34840000		ori	$a0,$a0,0x00
+  719 10012845 20050001		addi	$a1,$0,1
+  720 10012849 0000064c		syscall $IO_read
+  721 1001284d 30482905		andi 	$t0,$v0,keyFlag.down
+  722 10012851 11000004		beqz	$t0,2f
+  723                  		addi    $a0,keyboard.keydown-keyboard.flags
+  723 10012855 20840008		addi	$a0,$a0,keyboard.keydown-keyboard.flags
+  724 10012859 20050004		addi    $a1,$0,4
+  725 1001285d 0000064c		syscall $IO_read
+  726 10012861 08004a40		j 	keyDown
+  727                  	2:	la      $a0,mouse.flags
+  727 10012865 3c04a000		lui	$a0,0xA000
+  727 10012869 34840018		ori	$a0,$a0,0x18
+  728 1001286d 20050001		addi 	$a1,$0,1
+  729 10012871 0000064c		syscall $IO_read
+  730 10012875 30480001		andi 	$t0,$v0,mouseFlag.move
+  731 10012879 20840008		addi 	$a0,$a0,2*word
+  732 1001287d 20050004		addi    $a1,$0,4
+  733 10012881 11000003		beqz    $t0,3f
+  734 10012885 0000064c		syscall $IO_read
+  735 10012889 20060010		addi    $a2,$0,obj_Vft.mouseMove
+  736 1001288d 08004a2d		j	mouseEvent
+  737 10012891 30480002	3:	andi    $t0,$v0,mouseFlag.down
+  738 10012895 20840008		addi	$a0,$a0,2*word
+  739 10012899 11000002		beqz	$t0,4f
+  740 1001289d 0000064c		syscall $IO_read
+  741                   #	addi	$a2,$0,obj_VFT.mouseDown
+  742 100128a1 08004a2d		j	mouseEvent
+  743 100128a5 30400004	4:	andi	$0,$v0,mouseFlag.up
+  744 100128a9 20840008		addi	$a0,$a0,2*word
+  745 100128ad 11000000		beqz	$t0,5f
+  746 100128b1 0401ffe2	5:	b	poll
+  747                   
+  748                   
+  749                   mouseEvent:
+  750 100128b5 00024402		srl $t0,$v0,16
+  751 100128b9 304affff		andi $t2,$v0,0xffff
+  752 100128bd 2d4b0050		sltiu $t3,$t2,80
+  753 100128c1 1160ffde		beqz $t3,poll
+  754 100128c5 00084880		sll $t1,$t0,2
+  755 100128c9 01284820		add $t1,$t1,$t0
+  756 100128cd 00094900		sll $t1,$t1,4
+  757 100128d1 012a4820		add $t1,$t1,$t2
+  758 100128d5 00094880		sll $t1,$t1,2
+  759                  		la $t0,mouse.map
+  759 100128d9 3c081001		lui	$t0,0x1001
+  759 100128dd 35080884		ori	$t0,$t0,0x884
+  760 100128e1 01094020		add $t0,$t0,$t1
+  761 100128e5 8d100000		lw $s0,($t0)
+  762 100128e9 1200ffd4		beqz $s0,poll
+  763 100128ed 8e080000		lw $t0,obj.VFT($s0)
+  764 100128f1 01064820		add $t1,$t0,$a2
+  765 100128f5 8d2a0000		lw $t2,($t1)
+  766 100128f9 0140f809		jalr $t2
+  767 100128fd 08004a0f		j poll
+  768                   	
+  769 10012901 08004a0f	keyDown:	j poll
+  770 10012905 08004a0f	keyFlag.down:	j poll
+  771                   
+  772                   	
+  773 10012909 0000028c		syscall	$exit
+  774                   
+  775                   
+  776                   
+  777                   	
+                 	

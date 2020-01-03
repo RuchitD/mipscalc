@@ -1,0 +1,63 @@
+    1          00000004	fp.ra	=	4
+    2          00000008	fp.a0	=	8
+    3          0000000c	fp.a1	=	12
+    4          00000010	fp.a2	=	16
+    5          00000014	fp.a3	=	20
+    6          fffffffc	fp.s0	=	-4	
+    7          fffffff8	fp.s1	= 	-8
+    8          fffffff4	fp.s2	=	-12
+    9          fffffff0	fp.s3	=	-16
+   10          ffffffec	fp.s4	=	-20 # }
+   11                   # class obj   {
+   12 0000001c         	obj:	.struct		#{
+   13 00000000         	VFT:		.word	0	# Virtual Function table pointer
+   14 00000004         	parent:		.word	0	# Pointer to obj
+   15 00000008         	firstChild:	.word	0	# Pointer to obj
+   16 0000000c         	lastChild:	.word	0	# Pointer to obj
+   17 00000010         	leftSibling:	.word	0	# Pointer to obj
+   18 00000014         	rightSibling:	.word	0	# Pointer to obj
+   19 00000018         	x:		.byte	0	# screen co-ordinates upper-left corner
+   20 00000019         	y:		.byte	0	
+   21 0000001a         	width:		.byte	0 	# in characters
+   22 0000001b         	height:		.byte	0	# 
+   23                  			.data		#}
+   24 00000018         	obj_Vft: 	.struct		# { inherited by descendant classes.
+   25 00000000         	className:	.word	0	# returns pointer to string
+   26 00000004         	size:		.word	0	# returns int byte size required 
+   27 00000008         	image:		.word	0	# returns pointer to char array
+   28 0000000c         	mouseDown:	.word	0	# handles mouseDown events
+   29 00000010         	mouseMove:	.word	0	# handles mouseMove events
+   30 00000014         	mouseUp:	.word	0	# handles mouseUp events
+   31                  			.data		#}
+   32                  			.code
+   33                   obj.obj:		#(obj *parent:a0, word locationSize:a1, VFT *vft:a2) {
+   34                   # arguments for constructor
+   35                   # a0: parent pointer required for all but base obj.
+   36                   # a1: x,y,width,height packed co-ordinates and dimensions.
+   37                   # s0: "this" pointer
+   38 00400000 ae050018		sw	$a1,obj.x($s0)
+   39 00400004 ae060000		sw	$a2,obj.VFT($s0)		# populate the virtual function pointer
+   40 00400008 ae040004		sw	$a0,obj.parent($s0)
+   41 0040000c ae000008		sw	$0,obj.firstChild($s0)
+   42 00400010 ae00000c		sw	$0,obj.lastChild($s0)
+   43 00400014 ae000010		sw	$0,obj.leftSibling($s0)
+   44 00400018 ae000014		sw	$0,obj.rightSibling($s0)
+   45 0040001c 10800008		beqz	$a0,9f			# no parent means no linking
+   46 00400020 8c880008		lw	$t0,obj.firstChild($a0)
+   47 00400024 15000001		bnez	$t0,1f			# if the parent has no first
+   48 00400028 ac900008		sw	$s0,obj.firstChild($a0)	# this becomes first child
+   49 0040002c 8c88000c	1:	lw	$t0,obj.lastChild($a0)	# link this into parent's list
+   50 00400030 11000002		beqz	$t0,2f
+   51 00400034 ad100014		sw	$s0,obj.rightSibling($t0)
+   52 00400038 ae080010		sw	$t0,obj.leftSibling($s0)
+   53 0040003c ac90000c	2:	sw	$s0,obj.lastChild($a0)
+   54 00400040 03e00008	9:	jr	$ra			# ret to descendant constructor
+   55                   #}
+   56                   obj.draw:		#() { draw one object and add to mouse map
+   57 00400044 23bdfffc		addi	$sp,$sp,-4
+   58 00400048 afbf0000		sw	$ra,($sp)
+   59 0040004c 8e080000		lw	$t0,obj.VFT($s0)
+   60 00400050 8d080008		lw	$t0,obj_Vft.image($t0)
+   61 00400054 0100f809		jalr	$t0			# call virtual method for image *
+   62 00400058 00401821		mov	$v1,$v0			# protect pointer to image
+                 	

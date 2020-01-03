@@ -1,0 +1,8 @@
+calculator:
+	.asciiz "ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿"
+	.asciiz "³ ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿                                      ³"
+	.asciiz "³ ³ùDec o Hex o Bin³                                      ³"
+	.code
+main:
+	la $a0,calculator
+	syscall $print_string
